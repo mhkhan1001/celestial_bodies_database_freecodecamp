@@ -107,3 +107,20 @@ ALTER TABLE planet ADD FOREIGN KEY (star_id) REFERENCES star(star_id);
 ALTER TABLE star ADD FOREIGN KEY (galaxy_id) REFERENCES galaxy(galaxy_id);
 ALTER TABLE galaxy ADD FOREIGN KEY (constellation_id) REFERENCES constellation(constellation_id);
 ALTER TABLE constellation ADD FOREIGN KEY (star_id) REFERENCES star(star_id);
+
+
+
+EXTRA CMDS I LEARNED
+ALTER TABLE table_name RENAME COLUMN old_col_name TO new_col_name;
+ALTER TABLE table_name ALTER COLUMN column_name TYPE new_data_type;  (TO change the data type of a certain colmn)
+
+**********************
+To create a dump in bash
+*********************
+SAve the db by creating a dump in bash (not psql one)
+> pg_dump -cC --inserts -U username db_name > db_name.sql
+> pg_dump -cC --inserts -U freecodecamp universe > universe.sql
+
+It will save the commands to build your database again in universe.sql
+You can rebuild the database by entering following cmd in terminal here .sql file is located.
+> psql -U postgres < universe.sql 
