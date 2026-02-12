@@ -21,7 +21,7 @@ function RENT_MENU {
   if [[ -z $AVAILABLE_BIKES ]]
   then
     # send to main menu
-    MAIN_MENU "Sorry, we don't have any bikes available right now."
+    echo -e "\nSorry, we don't have any bikes available right now."
   else
   # display available bikes 
   echo -e "\nHere are the bikes we have available:"
@@ -36,7 +36,7 @@ function RENT_MENU {
     if [[ ! $BIKE_ID_TO_RENT =~ ^[0-9]+$ ]] 
     then
       # send to main menu
-      MAIN_MENU "That is not a valid bike number."
+      echo -e "\nThat is not a valid bike number."
     else
       #get bike availability
       BIKE_AVAILABILITY=$($PSQL "SELECT available FROM bikes WHERE available = TRUE AND bike_id=$BIKE_ID_TO_RENT")
@@ -45,7 +45,7 @@ function RENT_MENU {
       if [[ -z $BIKE_AVAILABILITY ]]
       then
         #send to main menu
-        MAIN_MENU "That bike is not available."
+        echo -e "\nThat bike is not available."
       else
         #get customer info
         echo -e "\nWhat's your phone number?"
@@ -71,7 +71,7 @@ function RENT_MENU {
         BIKE_INFO=$($PSQL "SELECT size,type FROM bikes WHERE bike_id = $BIKE_ID_TO_RENT")
         BIKE_INFO_FORMATTED=$(echo $BIKE_INFO | sed 's/ |/"/')
         # send to main menu
-        MAIN_MENU "I have put you down for the $BIKE_INFO_FORMATTED Bike, $(echo $CUSTOMER_NAME | sed -E 's/^ *| *$//g')."
+        echo -e "\nI have put you down for the $BIKE_INFO_FORMATTED Bike, $(echo $CUSTOMER_NAME | sed -E 's/^ *| *$//g')."
       fi
     fi
   fi
@@ -86,7 +86,7 @@ function RETURN_MENU {
   if [[ -z $CUSTOMER_ID ]] 
   then
     #send to main menu
-    MAIN_MENU "I could not find a record for that phone number."
+    echo -e "\nI could not find a record for that phone number."
   else
     #get customer's rentals
     CUSTOMER_RENTALS=$($PSQL "SELECT bike_id, type, size FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone = '$PHONE_NUMBER' AND date_returned IS NULL ORDER BY bike_id;")
@@ -95,7 +95,7 @@ function RETURN_MENU {
     if [[ -z $CUSTOMER_RENTALS ]]
     then
         #send to main menu
-        MAIN_MENU "You do not have any bikes rented."
+        echo -e "\nYou do not have any bikes rented."
     else
         #display rented bikes
         echo -e "\nHere are your rentals:"
@@ -110,7 +110,7 @@ function RETURN_MENU {
         if [[ ! $BIKE_ID_TO_RETURN =~ ^[0-9]+$ ]]
         then
             # send to main menu
-            MAIN_MENU "That is not a valid bike number."
+            echo -e "\nThat is not a valid bike number."
         else
           #check if input is rented
           RENTAL_ID=$($PSQL "SELECT rental_id from rentals INNER JOIN customers USING (customer_id) WHERE phone = '$PHONE_NUMBER' AND bike_id = $BIKE_ID_TO_RETURN AND date_returned IS NULL")
@@ -118,14 +118,14 @@ function RETURN_MENU {
           if [[ -z $RENTAL_ID ]]
           then
             # send to main menu
-            MAIN_MENU "You do not have that bike rented."
+            echo -e "\nYou do not have that bike rented."
           else
               #update date_returned
               RETURN_BIKE_RESULT=$($PSQL "UPDATE rentals SET date_returned = NOW() WHERE rental_id = $RENTAL_ID")
               #set bike availability to true
               SET_TO_TRUE_RESULT=$($PSQL "UPDATE bikes SET available = true WHERE bike_id = $BIKE_ID_TO_RETURN")
               #send to main menu
-              MAIN_MENU "Thank you for returning your bike."
+              echo -e "\nThank you for returning your bike."
           fi
         fi
     fi
@@ -138,11 +138,12 @@ function EXIT {
 }
 while true
 do
+echo -e "\n\n\n\n\n"
 MAIN_MENU
 case $MAIN_MENU_SELECTION in
 1) RENT_MENU;;
 2) RETURN_MENU;;
 3) EXIT; break;;
-*) MAIN_MENU "Please enter a valid option.";;
+*) echo -e "\nPlease enter a valid option.";;
 esac
 done
