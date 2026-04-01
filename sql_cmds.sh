@@ -26,5 +26,7 @@ OR
 echo "$($PSQL "SELECT DISTINCT(course) from courses FULL JOIN majors_courses USING (course_id) FULL JOIN majors USING (major_id) LEFT JOIN students USING (major_id) WHERE student_id IS NULL OR (students.first_name = 'Obie' AND last_name = 'Hilpert') ORDER BY course DESC")"
 echo -e "\nList of courses, in alphabetical order, with only one student enrolled:"
 echo "$($PSQL "SELECT course FROM students INNER JOIN majors_courses USING(major_id) INNER JOIN courses USING(course_id) GROUP BY course HAVING COUNT(student_id) = 1 ORDER BY course")"
+OR
+echo "$($PSQL "SELECT course from courses FULL JOIN majors_courses USING (course_id) FULL JOIN majors USING (major_id) LEFT JOIN students USING (major_id) GROUP BY course HAVING COUNT(student_id) = 1 ORDER BY course")"
 
 
